@@ -40,7 +40,7 @@ const initialInputs = {
 };
 
 const UpdatePlace = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const { placeId } = useParams();
   const identifiedPlace: PlaceProps = DUMMY_PLACES.find(
     (place) => place.id === placeId

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import Card from "../components/ui-elements/Card";
 import Input from "../components/form-elements/Input";
 import Button from "../components/form-elements/Button";
+
+import { AuthContextProps, AuthContext } from "../context/auth-context";
 
 import { useForm } from "../hooks/form-hook";
 import {
@@ -19,7 +21,9 @@ const initialForm = {
 };
 
 const Auth: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const auth: AuthContextProps = useContext(AuthContext);
+
+  const [isLogin, setIsLogin] = useState<boolean>(true);
   const [formState, formFieldHandler, setFormData] = useForm(
     initialForm,
     false
@@ -30,6 +34,7 @@ const Auth: React.FC = () => {
   ) => {
     event.preventDefault();
     console.log("formState.inputs", formState.inputs);
+    auth.login();
   };
 
   const switchModeHandler: () => void = () => {

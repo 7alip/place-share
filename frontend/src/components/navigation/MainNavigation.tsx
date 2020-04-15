@@ -9,7 +9,7 @@ import SideDrawer from "./SideDrawer";
 import Backdrop from "../ui-elements/Backdrop";
 
 const MainNavigation: React.FC = (props) => {
-  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const [drawerIsOpen, setDrawerIsOpen] = useState<boolean>(false);
 
   const openDrawer: () => void = () => setDrawerIsOpen(true);
   const closeDrawer: () => void = () => setDrawerIsOpen(false);
