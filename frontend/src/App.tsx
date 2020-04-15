@@ -6,11 +6,12 @@ import {
   Switch,
 } from "react-router-dom";
 
+import Auth from "./pages/Auth";
 import Users from "./pages/Users";
 import NewPlace from "./pages/NewPlace";
 import UserPlaces from "./pages/UserPlaces";
-import MainNavigation from "./components/navigation/MainNavigation";
 import UpdatePlace from "./pages/UpdatePlace";
+import MainNavigation from "./components/navigation/MainNavigation";
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,9 @@ const App: React.FC = () => {
           </Route>
           <Route path="/users" exact>
             <Users />
+          </Route>
+          <Route path="/auth" exact>
+            <Auth />
           </Route>
           <Redirect to="/" />
         </Switch>
