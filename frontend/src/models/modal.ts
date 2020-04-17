@@ -5,10 +5,10 @@ interface ModalProps {
   onSubmit?: (
     event: React.MouseEvent<React.FormEvent, HTMLFormElement> | any
   ) => void;
-  contentClass: string;
-  footerClass: string;
-  footer: React.ReactNode;
-  show: boolean | undefined;
+  contentClass?: string;
+  footerClass?: string;
+  footer?: React.ReactNode;
+  show: boolean;
   onCancel?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 

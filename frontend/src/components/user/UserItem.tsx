@@ -9,12 +9,12 @@ import UserProps from "../../models/user";
 import "./UserItem.scss";
 
 const UserItem: React.FC<{ user: UserProps }> = (props) => {
-  const { id, name, image, placeCount } = props.user;
+  const { _id, name, image, placeCount } = props.user;
 
   return (
     <li className="user-item">
       <Card>
-        <Link to={`/${id}/places`}>
+        <Link to={`/${_id}/places`}>
           <div className="user-item__image">
             <Avatar image={image} alt={name} />
           </div>

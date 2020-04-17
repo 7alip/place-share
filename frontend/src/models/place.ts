@@ -1,5 +1,5 @@
 interface PlaceProps {
-  id?: string;
+  _id?: string;
   imageUrl: string;
   title: string;
   address: string;

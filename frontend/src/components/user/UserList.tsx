@@ -20,7 +20,7 @@ const UserList: React.FC<{ items: UserProps[] }> = (props: any) => {
   return (
     <ul className="users-list">
       {props.items.map((user: UserProps) => (
-        <UserItem key={user.id} user={user} />
+        <UserItem key={user._id} user={user} />
       ))}
     </ul>
   );

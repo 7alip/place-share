@@ -155,8 +155,6 @@ export const deletePlaceById: RequestHandler = async (req, res, next) => {
     );
   }
 
-  console.log("place", place);
-
   if (!place)
     return next(
       new HttpError("Could not find this place for provided id", 404)

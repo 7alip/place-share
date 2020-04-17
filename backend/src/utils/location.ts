@@ -17,8 +17,6 @@ const getCoordsForAddress: (
     })
     .send();
 
-  console.log("result", result.body.features[0].center);
-
   return result.body.features[0].center;
 };
 

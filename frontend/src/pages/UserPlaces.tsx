@@ -7,7 +7,7 @@ import PlaceProps from "../models/place";
 
 const DUMMY_PLACES: PlaceProps[] = [
   {
-    id: "p1",
+    _id: "p1",
     title: "Empire State Building",
     description: "One of the most famous sky scrapers in the world!",
     address: "20 W 34th St, New York, NY 10001",
@@ -17,7 +17,7 @@ const DUMMY_PLACES: PlaceProps[] = [
     creator: "u1",
   },
   {
-    id: "p2",
+    _id: "p2",
     title: "Empire State Building",
     description: "One of the most famous sky scrapers in the world!",
     address: "adress",

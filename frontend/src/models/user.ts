@@ -1,5 +1,5 @@
 interface UserProps {
-  id: string;
+  _id: string;
   image: string;
   name: string;
   placeCount: number;

@@ -87,7 +87,7 @@ const PlaceItem: React.FC<PlaceProps> = (props) => {
             </Button>
             {auth.isLoggedIn && (
               <>
-                <Button to={`/places/${props.id}`}>Edit</Button>
+                <Button to={`/places/${props._id}`}>Edit</Button>
                 <Button danger onClick={openDeleteHandler}>
                   Delete
                 </Button>

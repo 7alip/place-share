@@ -3,10 +3,12 @@ import React, { useState, useContext } from "react";
 import Card from "../components/ui-elements/Card";
 import Input from "../components/form-elements/Input";
 import Button from "../components/form-elements/Button";
-
-import { AuthContextProps, AuthContext } from "../context/auth-context";
+import Spinner from "../components/ui-elements/Spinner";
+import ErrorModal from "../components/ui-elements/ErrorModal";
 
 import { useForm } from "../hooks/form-hook";
+import { AuthContextProps, AuthContext } from "../context/auth-context";
+
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -14,6 +16,7 @@ import {
 } from "../utils/validator";
 
 import "./Auth.scss";
+import { useHttpClient } from "../hooks/http-hooks";
 
 const initialForm = {
   email: { value: "", isValid: false },
@@ -23,21 +26,57 @@ const initialForm = {
 const Auth: React.FC = () => {
   const auth: AuthContextProps = useContext(AuthContext);
 
-  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [isLoginMode, setIsLoginMode] = useState<boolean>(false);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const [formState, formFieldHandler, setFormData] = useForm(
     initialForm,
     false
   );
 
-  const authSubmitHandler: React.FormEventHandler<HTMLFormElement> = (
+  const authSubmitHandler: React.FormEventHandler<HTMLFormElement> = async (
     event
   ) => {
     event.preventDefault();
-    auth.login();
+
+    let response: Response;
+
+    if (isLoginMode) {
+      try {
+        response = await sendRequest(
+          "http://localhost:5000/api/user/login",
+          "POST",
+          {
+            "Content-Type": "application/json",
+          },
+          JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          })
+        );
+        auth.login();
+      } catch {}
+    } else {
+      try {
+        response = await sendRequest(
+          "http://localhost:5000/api/user/signup",
+          "POST",
+          {
+            "Content-Type": "application/json",
+          },
+          JSON.stringify({
+            name: formState.inputs.email.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          })
+        );
+        auth.login();
+      } catch (error) {}
+    }
   };
 
   const switchModeHandler: () => void = () => {
-    if (!isLogin) {
+    if (!isLoginMode) {
       setFormData(
         { ...formState.inputs, name: undefined },
         formState.inputs.email.isValid && formState.inputs.password.isValid
@@ -49,51 +88,55 @@ const Auth: React.FC = () => {
       );
     }
 
-    setIsLogin((prevMode) => !prevMode);
+    setIsLoginMode((prevMode) => !prevMode);
   };
 
   return (
-    <Card className="authentication">
-      <h2>Login Required</h2>
-      <hr />
-      <form onSubmit={authSubmitHandler}>
-        {!isLogin && (
+    <>
+      <ErrorModal show={!!error} error={error!} onClear={clearError} />
+      <Card className="authentication">
+        {isLoading && <Spinner asOverlay />}
+        <h2>Login Required</h2>
+        <hr />
+        <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <Input
+              id="name"
+              element="input"
+              type="text"
+              label="Name"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a valid name"
+              onInput={formFieldHandler}
+            />
+          )}
           <Input
-            id="name"
+            id="email"
             element="input"
-            type="text"
-            label="Name"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid name"
+            type="email"
+            label="Email"
+            validators={[VALIDATOR_EMAIL()]}
+            errorText="Please enter a valid email address"
             onInput={formFieldHandler}
           />
-        )}
-        <Input
-          id="email"
-          element="input"
-          type="email"
-          label="Email"
-          validators={[VALIDATOR_EMAIL()]}
-          errorText="Please enter a valid email address"
-          onInput={formFieldHandler}
-        />
-        <Input
-          id="password"
-          element="input"
-          type="password"
-          label="Password"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="Please enter a valid password (min. 5 characters)"
-          onInput={formFieldHandler}
-        />
-        <Button disabled={!formState.isValid}>
-          {isLogin ? "Login" : "Signup"}
+          <Input
+            id="password"
+            element="input"
+            type="password"
+            label="Password"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid password (min. 5 characters)"
+            onInput={formFieldHandler}
+          />
+          <Button disabled={!formState.isValid}>
+            {isLoginMode ? "Login" : "Signup"}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          Switch to signup
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        Switch to signup
-      </Button>
-    </Card>
+      </Card>
+    </>
   );
 };
 

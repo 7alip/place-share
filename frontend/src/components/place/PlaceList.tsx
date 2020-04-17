@@ -24,8 +24,8 @@ const PlaceList: React.FC<{ items: PlaceProps[] }> = (props) => {
     <ul className="place-list">
       {props.items.map((place) => (
         <PlaceItem
-          key={place.id}
-          id={place.id}
+          key={place._id}
+          _id={place._id}
           address={place.address}
           imageUrl={place.imageUrl}
           title={place.title}
