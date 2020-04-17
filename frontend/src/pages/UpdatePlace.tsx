@@ -69,7 +69,6 @@ const UpdatePlace = () => {
 
   const placeSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("form.inputs", formState.inputs);
   };
 
   if (!identifiedPlace)
@@ -80,8 +79,6 @@ const UpdatePlace = () => {
         </Card>
       </div>
     );
-
-  console.log("formState", formState.inputs.title);
 
   if (loading) {
     return (

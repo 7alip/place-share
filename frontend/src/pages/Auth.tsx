@@ -33,7 +33,6 @@ const Auth: React.FC = () => {
     event
   ) => {
     event.preventDefault();
-    console.log("formState.inputs", formState.inputs);
     auth.login();
   };
 

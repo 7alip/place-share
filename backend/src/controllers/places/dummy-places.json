@@ -1,0 +1,20 @@
+[
+  {
+    "id": "p1",
+    "title": "Empire State Building",
+    "description": "One of the most famous sky scrapers in the world!",
+    "address": "20 W 34th St, New York, NY 10001",
+    "coordinates": { "lat": 40.74, "lng": -73.98 },
+    "imageUrl": "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
+    "creatorId": "u1"
+  },
+  {
+    "id": "p2",
+    "title": "Empire State Building",
+    "description": "One of the most famous sky scrapers in the world!",
+    "address": "adress",
+    "coordinates": { "lat": 40.74, "lng": -73.98 },
+    "imageUrl": "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
+    "creatorId": "u2"
+  }
+]

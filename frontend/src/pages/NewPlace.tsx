@@ -19,7 +19,6 @@ const NewPlace = () => {
 
   const placeSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("form.inputs", formState.inputs);
   };
 
   return (
