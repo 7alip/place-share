@@ -20,7 +20,7 @@ const DUMMY_PLACES: PlaceProps[] = [
     coordinates: { lat: 40.74, lng: -73.98 },
     imageUrl:
       "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
-    creatorId: "u1",
+    creator: "u1",
   },
   {
     id: "p2",
@@ -30,7 +30,7 @@ const DUMMY_PLACES: PlaceProps[] = [
     coordinates: { lat: 40.74, lng: -73.98 },
     imageUrl:
       "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
-    creatorId: "u2",
+    creator: "u2",
   },
 ];
 
@@ -69,7 +69,6 @@ const UpdatePlace = () => {
 
   const placeSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("form.inputs", formState.inputs);
   };
 
   if (!identifiedPlace)
@@ -80,8 +79,6 @@ const UpdatePlace = () => {
         </Card>
       </div>
     );
-
-  console.log("formState", formState.inputs.title);
 
   if (loading) {
     return (

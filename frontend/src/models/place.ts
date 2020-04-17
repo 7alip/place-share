@@ -4,7 +4,7 @@ interface PlaceProps {
   title: string;
   address: string;
   description: string;
-  creatorId?: string;
+  creator?: string;
   coordinates: { lat: number; lng: number };
 }
 

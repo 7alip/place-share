@@ -30,7 +30,7 @@ const PlaceList: React.FC<{ items: PlaceProps[] }> = (props) => {
           imageUrl={place.imageUrl}
           title={place.title}
           description={place.description}
-          creatorId={place.creatorId}
+          creator={place.creator}
           coordinates={place.coordinates}
         />
       ))}

@@ -1,55 +1,30 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import bodyParser from "body-parser";
-import uuid from "uuid/v4";
+import mongoose from "mongoose";
+
+import corsMiddleware from "./middlewares/cors-middleware";
+import errorHandlerMiddleware from "./middlewares/errorHandler-middleware";
+import placesRouter from "./routes/places-routes";
+import usersRouter from "./routes/users-routes";
+import notFoundMiddleware from "./middlewares/notFound-middleware";
 
 const app = express();
 
-const DUMMY_PRODUCTS: any[] = []; // not a database, just some in-memory storage for now
-
 app.use(bodyParser.json());
+app.use(corsMiddleware);
 
-// CORS Headers => Required for cross-origin/ cross-server communication
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
-  );
-  next();
-});
+app.use("/api/user", usersRouter);
+app.use("/api/places", placesRouter);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).json({ message: err.message });
-});
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
-app.get("/products", (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({ products: DUMMY_PRODUCTS });
-});
-
-app.post("/product", (req: Request, res: Response, next: NextFunction) => {
-  const { title, price } = req.body;
-
-  if (!title || title.trim().length === 0 || !price || price <= 0) {
-    return res.status(422).json({
-      message: "Invalid input, please enter a valid title and price.",
-    });
-  }
-
-  const createdProduct = {
-    id: uuid(),
-    title,
-    price,
-  };
-
-  DUMMY_PRODUCTS.push(createdProduct);
-
-  res
-    .status(201)
-    .json({ message: "Created new product.", product: createdProduct });
-});
-
-app.listen(5000); // start Node + Express server on port 5000
+mongoose
+  .connect(
+    "mongodb+srv://testtest:testtest@cluster0-31adc.mongodb.net/test?retryWrites=true&w=majority",
+    { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
+  )
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch((error) => console.log(error));

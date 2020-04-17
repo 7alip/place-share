@@ -16,12 +16,10 @@ const PlaceItem: React.FC<PlaceProps> = (props) => {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
   const openMapHandler: () => void = () => {
-    console.log("showMap", showMap);
     setShowMap(true);
   };
 
   const closeMapHandler: () => void = () => {
-    console.log("showMap", showMap);
     setShowMap(false);
   };
 
