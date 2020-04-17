@@ -4,29 +4,11 @@ import { validationResult } from "express-validator";
 import HttpError from "../../models/http-errors.model";
 import User, { IUser } from "../../models/user.model";
 
-interface ILoginUser {
-  email: IUser["email"];
-  password: IUser["password"];
-}
-
 interface ISignupUser {
   name: IUser["name"];
   email: IUser["email"];
   password: IUser["password"];
 }
-
-export const getUsers: RequestHandler = async (req, res, next) => {
-  let users;
-  try {
-    users = await User.find({}, "-password");
-  } catch (error) {
-    return next(
-      new HttpError("Fetching users failed, please try again later", 500)
-    );
-  }
-
-  res.json({ users });
-};
 
 export const signup: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
@@ -67,24 +49,4 @@ export const signup: RequestHandler = async (req, res, next) => {
   }
 
   res.status(201).json({ user: createdUser });
-};
-
-export const login: RequestHandler = async (req, res, next) => {
-  const { email, password }: ILoginUser = req.body;
-
-  let existingUser;
-  try {
-    existingUser = await User.findOne({ email });
-  } catch (error) {
-    return next(
-      new HttpError("Signing up failed, please try again later", 500)
-    );
-  }
-
-  if (!existingUser || existingUser.password !== password)
-    return next(
-      new HttpError("Invalid credentials, could not log you in.", 401)
-    );
-
-  res.json("Logged in!");
 };

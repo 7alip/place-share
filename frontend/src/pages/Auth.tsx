@@ -39,37 +39,33 @@ const Auth: React.FC = () => {
   ) => {
     event.preventDefault();
 
-    let response: Response;
+    const loginUrl = "http://localhost:5000/api/user/login";
+    const signupUrl = "http://localhost:5000/api/user/signup";
 
+    const header = {
+      "Content-Type": "application/json",
+    };
+
+    const loginBody = JSON.stringify({
+      email: formState.inputs.email.value,
+      password: formState.inputs.password.value,
+    });
+
+    const signupBody = JSON.stringify({
+      name: formState.inputs.email.value,
+      email: formState.inputs.email.value,
+      password: formState.inputs.password.value,
+    });
+
+    let response;
     if (isLoginMode) {
       try {
-        response = await sendRequest(
-          "http://localhost:5000/api/user/login",
-          "POST",
-          {
-            "Content-Type": "application/json",
-          },
-          JSON.stringify({
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          })
-        );
+        response = await sendRequest(loginUrl, "POST", header, loginBody);
         auth.login();
       } catch {}
     } else {
       try {
-        response = await sendRequest(
-          "http://localhost:5000/api/user/signup",
-          "POST",
-          {
-            "Content-Type": "application/json",
-          },
-          JSON.stringify({
-            name: formState.inputs.email.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          })
-        );
+        response = await sendRequest(signupUrl, "POST", header, signupBody);
         auth.login();
       } catch (error) {}
     }
@@ -133,7 +129,7 @@ const Auth: React.FC = () => {
           </Button>
         </form>
         <Button inverse onClick={switchModeHandler}>
-          Switch to signup
+          Switch to {isLoginMode ? "signup" : "login"}
         </Button>
       </Card>
     </>

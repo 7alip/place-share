@@ -7,13 +7,16 @@ export const useHttpClient = () => {
   const activeHttpRequests = useRef([]);
 
   const sendRequest = useCallback(
-    async (url, method = "GET", body = null, headers = {}) => {
+    async (url, method = "GET", headers = {}, body = null) => {
       setIsLoading(true);
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
 
+      console.log("body", body);
+      console.log("headers", headers);
+
       try {
-        const response = await fetch(url, {
+        const response = await window.fetch(url, {
           method,
           headers,
           body,
@@ -30,12 +33,13 @@ export const useHttpClient = () => {
           throw new Error(responseData.message);
         }
 
-        setIsLoading(false);
         return responseData;
       } catch (err) {
         setError(err.message);
-        setIsLoading(false);
+        console.log("err", err);
         throw err;
+      } finally {
+        setIsLoading(false);
       }
     },
     []

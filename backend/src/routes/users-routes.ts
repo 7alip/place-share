@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check } from "express-validator";
 
-import { getUsers, signup, login } from "../controllers/users/users-controller";
+import { getUsers, signup, login } from "../controllers/users";
 
 const checkSignup: any[] = [
   check("name").not().isEmpty(),

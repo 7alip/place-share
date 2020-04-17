@@ -5,7 +5,9 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\"  && exit 1",
-    "start": "nodemon dist/server.js"
+    "start": "nodemon dist/server.js",
+    "watch": "tsc -w",
+    "build": "tsc"
   },
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.10.0",
@@ -24,6 +26,7 @@
     "@types/mongoose-unique-validator": "^1.0.3",
     "@types/node": "^13.11.1",
     "@types/uuid": "^7.0.2",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "typescript": "^3.8.3"
   }
 }

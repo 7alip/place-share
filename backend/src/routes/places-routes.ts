@@ -19,7 +19,7 @@ import {
   createPlace,
   updatePlaceById,
   deletePlaceById,
-} from "../controllers/places/places-controller";
+} from "../controllers/places";
 
 const placesRouter = Router();
 
