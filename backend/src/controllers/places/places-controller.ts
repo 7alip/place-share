@@ -1,47 +1,63 @@
-import { v4 } from "uuid";
 import { RequestHandler } from "express";
+import mongoose, { ClientSession } from "mongoose";
 import { validationResult } from "express-validator";
 
 import HttpError from "../../models/http-errors.model";
+import Place, { IPlace } from "../../models/place.model";
 import getCoordsForAddress from "../../utils/location";
 
-import DUMMY_PLACES from "./dummy-places.json";
+import User from "../../models/user.model";
 
-interface IPlace {
-  id: string;
-  title: string;
-  description: string;
-  coordinates: { lat: number; lng: number };
-  address: string;
-  creatorId: string;
-  imageUrl: string;
-}
+export const getAllPlaces: RequestHandler = async (req, res, next) => {
+  let places;
+  try {
+    places = await Place.find().exec();
+  } catch (error) {
+    next(new HttpError("Something went wrong, could not find a place", 500));
+  }
 
-export const getAllPlaces: RequestHandler = (req, res, next) => {
-  res.json(DUMMY_PLACES);
+  res.json({ places });
 };
+export const getPlaceById: RequestHandler = async (req, res, next) => {
+  const placeId: IPlace["_id"] = req.params.pid;
 
-export const getPlaceById: RequestHandler = (req, res, next) => {
-  const placeId = req.params.pid;
-
-  const place = DUMMY_PLACES.find((place: IPlace) => place.id === placeId);
+  let place;
+  try {
+    place = await Place.findById(placeId).exec();
+  } catch (error) {
+    next(new HttpError("Something went wrong, could not find a place", 500));
+  }
 
   if (!place)
-    throw new HttpError("Could not find a place for the provided id", 404);
+    return next(
+      new HttpError("Could not find a place for the provided id", 404)
+    );
 
-  res.json(place);
+  res.json({ place: place.toObject({ getters: true }) });
 };
 
-export const getPlacesByUserId: RequestHandler = (req, res, next) => {
+export const getPlacesByUserId: RequestHandler = async (req, res, next) => {
   const userId = req.params.uid;
-  const places: IPlace[] = DUMMY_PLACES.filter(
-    (place: any) => place.creatorId === userId
-  );
 
-  if (places.length === 0)
-    throw new HttpError("Could not find a place for the provided user id", 404);
+  let userWithPlaces;
+  try {
+    userWithPlaces = await User.findById(userId).populate("places");
+  } catch (error) {
+    return next(
+      new HttpError("Fetching places failed, please try again later", 500)
+    );
+  }
 
-  res.json(places);
+  if (!userWithPlaces || userWithPlaces.places.length === 0)
+    return next(
+      new HttpError("Could not find a place for the provided user id", 404)
+    );
+
+  res.json({
+    places: userWithPlaces.places.map((place) =>
+      place.toObject({ getters: true })
+    ),
+  });
 };
 
 export const createPlace: RequestHandler = async (req, res, next) => {
@@ -52,7 +68,7 @@ export const createPlace: RequestHandler = async (req, res, next) => {
       new HttpError("Invalid inputs passed, please check your data", 422)
     );
 
-  const { title, description, address, creatorId, imageUrl }: IPlace = req.body;
+  const { title, description, address, creator, imageUrl } = req.body;
 
   let coordinates;
   try {
@@ -61,21 +77,47 @@ export const createPlace: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace: IPlace = {
-    id: v4(),
+  let user;
+  try {
+    user = await User.findById(creator).exec();
+  } catch (error) {
+    return next(
+      new HttpError(
+        error.reason || "Fetching places failed, please try again later",
+        500
+      )
+    );
+  }
+
+  if (!user)
+    return next(new HttpError("Could not find user for provided id", 404));
+
+  const createdPlace: IPlace = new Place({
     title,
     description,
     address,
-    coordinates: { lat: +coordinates[0], lng: +coordinates[1] },
-    creatorId,
-    imageUrl: imageUrl || "",
-  };
-  DUMMY_PLACES.push(createdPlace);
+    coordinates: { lat: coordinates[0], lng: coordinates[1] },
+    creator,
+    imageUrl: imageUrl || "image-url",
+  });
 
-  res.status(201).json(DUMMY_PLACES);
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await createdPlace.save({ session });
+    user.places.push(createdPlace);
+    await user.save({ session });
+    await session.commitTransaction();
+  } catch (error) {
+    return next(
+      new HttpError("Creating place failed, please try again later", 500)
+    );
+  }
+
+  res.status(201).json({ place: createPlace });
 };
 
-export const updatePlaceById: RequestHandler = (req, res, next) => {
+export const updatePlaceById: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty())
@@ -84,39 +126,58 @@ export const updatePlaceById: RequestHandler = (req, res, next) => {
   const placeId: string = req.params.pid;
   const { title, description } = req.body;
 
-  const updatedPlace: any = {
-    ...DUMMY_PLACES.find((place: IPlace) => place.id === placeId),
-  };
+  let place;
+  try {
+    place = await Place.findByIdAndUpdate(
+      placeId,
+      { title, description },
+      { new: true }
+    );
+  } catch (error) {
+    next(new HttpError("Could not find a place for the provided id", 500));
+  }
 
-  const placeIndex: number = DUMMY_PLACES.findIndex(
-    (place: IPlace) => place.id === placeId
-  );
+  if (!place)
+    next(new HttpError("Could not find a place for the provided id", 404));
 
-  if (!updatedPlace)
-    throw new HttpError("Could not find a place for the provided id", 404);
-
-  updatedPlace.title = title;
-  updatedPlace.description = description;
-
-  DUMMY_PLACES[placeIndex] = updatedPlace;
-
-  res.status(201).json(updatedPlace);
+  res.status(201).json({ place });
 };
 
-export const deletePlaceById: RequestHandler = (req, res, next) => {
+export const deletePlaceById: RequestHandler = async (req, res, next) => {
   const placeId = req.params.pid;
 
-  if (!DUMMY_PLACES.find((place: IPlace) => place.id === placeId))
-    throw new HttpError("Could not find a place for that id", 422);
+  let place;
+  try {
+    place = await Place.findById(placeId).populate("creator");
+  } catch (error) {
+    return next(
+      new HttpError("Something went wrong, could not delete the place", 500)
+    );
+  }
 
-  const placeExist = DUMMY_PLACES.some((place: IPlace) => place.id === placeId);
+  console.log("place", place);
 
-  if (!placeExist)
-    throw new HttpError("Could not find a place for the provided user id", 404);
+  if (!place)
+    return next(
+      new HttpError("Could not find this place for provided id", 404)
+    );
 
-  const restPlaces = DUMMY_PLACES.filter(
-    (place: IPlace) => place.id !== placeId
-  );
+  try {
+    const session: ClientSession = await mongoose.startSession();
+    session.startTransaction();
+    await place.remove(() => {
+      {
+        session;
+      }
+    });
+    await place.creator.places.pull(place);
+    await place.creator.save({ session });
+    session.commitTransaction();
+  } catch (error) {
+    return next(
+      new HttpError("Something went wrong, could not delete the place", 500)
+    );
+  }
 
-  res.status(201).json(restPlaces);
+  res.status(201).json("Deleted succesfully");
 };

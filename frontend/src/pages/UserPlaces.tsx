@@ -14,7 +14,7 @@ const DUMMY_PLACES: PlaceProps[] = [
     coordinates: { lat: 40.74, lng: -73.98 },
     imageUrl:
       "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
-    creatorId: "u1",
+    creator: "u1",
   },
   {
     id: "p2",
@@ -24,7 +24,7 @@ const DUMMY_PLACES: PlaceProps[] = [
     coordinates: { lat: 40.74, lng: -73.98 },
     imageUrl:
       "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
-    creatorId: "u2",
+    creator: "u2",
   },
 ];
 
@@ -33,7 +33,7 @@ const UserPlaces: React.FC = () => {
 
   return (
     <PlaceList
-      items={DUMMY_PLACES.filter((place) => place.creatorId === userId)}
+      items={DUMMY_PLACES.filter((place) => place.creator === userId)}
     />
   );
 };

@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import mongoose from "mongoose";
 
 import corsMiddleware from "./middlewares/cors-middleware";
 import errorHandlerMiddleware from "./middlewares/errorHandler-middleware";
@@ -18,4 +19,12 @@ app.use("/api/places", placesRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-app.listen(5000);
+mongoose
+  .connect(
+    "mongodb+srv://testtest:testtest@cluster0-31adc.mongodb.net/test?retryWrites=true&w=majority",
+    { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
+  )
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch((error) => console.log(error));
