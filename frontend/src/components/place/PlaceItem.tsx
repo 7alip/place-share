@@ -98,7 +98,7 @@ const PlaceItem: React.FC<PlaceProps> = (props) => {
             <Button inverse onClick={openMapHandler}>
               View On Map
             </Button>
-            {auth.isLoggedIn && (
+            {auth.userId === props.creator && (
               <>
                 <Button to={`/places/${props._id}`}>Edit</Button>
                 <Button danger onClick={openDeleteHandler}>
