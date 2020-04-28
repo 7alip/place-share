@@ -25,5 +25,5 @@ export const login: RequestHandler = async (req, res, next) => {
       new HttpError("Invalid credentials, could not log you in.", 401)
     );
 
-  res.json("Logged in!");
+  res.json({ message: "Logged in!", user: existingUser });
 };

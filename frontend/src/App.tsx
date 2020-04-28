@@ -17,16 +17,19 @@ import { AuthContext, AuthContextProps } from "./context/auth-context";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>();
 
-  const login = useCallback(() => {
+  const login = useCallback((uid) => {
     setIsLoggedIn(true);
+    setUserId(uid);
   }, []);
 
   const logout = useCallback(() => {
     setIsLoggedIn(false);
+    setUserId(null);
   }, []);
 
-  const context: AuthContextProps = { isLoggedIn, login, logout };
+  const context: AuthContextProps = { isLoggedIn, login, userId, logout };
 
   let routes;
 

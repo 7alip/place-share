@@ -61,12 +61,13 @@ const Auth: React.FC = () => {
     if (isLoginMode) {
       try {
         response = await sendRequest(loginUrl, "POST", header, loginBody);
-        auth.login();
+        console.log("response", response);
+        auth.login(response.user._id);
       } catch {}
     } else {
       try {
         response = await sendRequest(signupUrl, "POST", header, signupBody);
-        auth.login();
+        auth.login(response.user._id);
       } catch (error) {}
     }
   };
