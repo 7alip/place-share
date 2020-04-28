@@ -25,6 +25,12 @@ const UserPlaces: React.FC = () => {
     fetchPlaces();
   }, [sendRequest, userId]);
 
+  const placeDeletedHandler = (deletedPlaceId: string) => {
+    setPlaces((prevPlaces) =>
+      prevPlaces?.filter((place) => place._id !== deletedPlaceId)
+    );
+  };
+
   return (
     <>
       <ErrorModal error={error!} show={error!} onClear={clearError} />
@@ -36,6 +42,7 @@ const UserPlaces: React.FC = () => {
       {!isLoading && places && places.length > 0 && (
         <PlaceList
           items={places!.filter((place) => place.creator === userId)}
+          onDeletePlace={placeDeletedHandler}
         />
       )}
     </>

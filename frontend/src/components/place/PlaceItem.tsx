@@ -8,9 +8,13 @@ import { AuthContextProps, AuthContext } from "../../context/auth-context";
 import PlaceProps from "../../models/place";
 
 import "./PlaceItem.scss";
+import { useHttpClient } from "../../hooks/http-hooks";
+import Spinner from "../ui-elements/Spinner";
+import ErrorModal from "../ui-elements/ErrorModal";
 
 const PlaceItem: React.FC<PlaceProps> = (props) => {
   const auth: AuthContextProps = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [showMap, setShowMap] = useState<boolean>(false);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
@@ -31,12 +35,20 @@ const PlaceItem: React.FC<PlaceProps> = (props) => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler: () => void = () => {
-    console.log("Deleting");
+  const confirmDeleteHandler: () => void = async () => {
+    setShowConfirmModal(false);
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/places/${props._id}`,
+        "DELETE"
+      );
+      props.onDelete!(props._id);
+    } catch (error) {}
   };
 
   return (
     <>
+      <ErrorModal error={error!} show={error!} onClear={clearError} />
       <Modal
         show={showMap}
         onCancel={closeMapHandler}
@@ -72,7 +84,8 @@ const PlaceItem: React.FC<PlaceProps> = (props) => {
         </p>
       </Modal>
       <li className="place-item">
-        <Card>
+        <Card className="place-item__content">
+          {isLoading && <Spinner asOverlay />}
           <div className="place-item__image">
             <img src={props.imageUrl} alt={props.title} />
           </div>
