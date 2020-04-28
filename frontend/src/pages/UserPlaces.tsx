@@ -1,40 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import PlaceList from "../components/place/PlaceList";
 
 import PlaceProps from "../models/place";
-
-const DUMMY_PLACES: PlaceProps[] = [
-  {
-    _id: "p1",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    address: "20 W 34th St, New York, NY 10001",
-    coordinates: { lat: 40.74, lng: -73.98 },
-    imageUrl:
-      "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
-    creator: "u1",
-  },
-  {
-    _id: "p2",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    address: "adress",
-    coordinates: { lat: 40.74, lng: -73.98 },
-    imageUrl:
-      "https://cdn.getyourguide.com/img/location_img-2608-1226636435-148.jpg",
-    creator: "u2",
-  },
-];
+import { useHttpClient } from "../hooks/http-hooks";
+import ErrorModal from "../components/ui-elements/ErrorModal";
+import Spinner from "../components/ui-elements/Spinner";
 
 const UserPlaces: React.FC = () => {
+  const [places, setPlaces] = useState<PlaceProps[]>();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const { userId } = useParams();
 
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const response = await sendRequest(
+          `http://localhost:5000/api/places/user/${userId}`
+        );
+        setPlaces(response.places);
+      } catch (error) {}
+    };
+    fetchPlaces();
+  }, [sendRequest, userId]);
+
   return (
-    <PlaceList
-      items={DUMMY_PLACES.filter((place) => place.creator === userId)}
-    />
+    <>
+      <ErrorModal error={error!} show={error!} onClear={clearError} />
+      {isLoading && (
+        <div className="center">
+          <Spinner />
+        </div>
+      )}
+      {!isLoading && places && places.length > 0 && (
+        <PlaceList
+          items={places!.filter((place) => place.creator === userId)}
+        />
+      )}
+    </>
   );
 };
 
