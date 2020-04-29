@@ -17,6 +17,7 @@ import {
 
 import "./Auth.scss";
 import { useHttpClient } from "../hooks/http-hooks";
+import ImageUpload from "../components/form-elements/ImageUpload";
 
 const initialForm = {
   email: { value: "", isValid: false },
@@ -75,12 +76,16 @@ const Auth: React.FC = () => {
   const switchModeHandler: () => void = () => {
     if (!isLoginMode) {
       setFormData(
-        { ...formState.inputs, name: undefined },
+        { ...formState.inputs, name: undefined, image: undefined },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
       setFormData(
-        { ...formState.inputs, name: { value: "", isValid: false } },
+        {
+          ...formState.inputs,
+          name: { value: "", isValid: false },
+          image: { value: null, isValid: false },
+        },
         false
       );
     }
@@ -97,15 +102,23 @@ const Auth: React.FC = () => {
         <hr />
         <form onSubmit={authSubmitHandler}>
           {!isLoginMode && (
-            <Input
-              id="name"
-              element="input"
-              type="text"
-              label="Name"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Please enter a valid name"
-              onInput={formFieldHandler}
-            />
+            <>
+              <Input
+                id="name"
+                element="input"
+                type="text"
+                label="Name"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Please enter a valid name"
+                onInput={formFieldHandler}
+              />
+              <ImageUpload
+                errorText={error!}
+                center
+                id="image"
+                onInput={formFieldHandler}
+              />
+            </>
           )}
           <Input
             id="email"
