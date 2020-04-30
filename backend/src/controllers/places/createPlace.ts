@@ -15,8 +15,7 @@ export const createPlace: RequestHandler = async (req, res, next) => {
       new HttpError("Invalid inputs passed, please check your data", 422)
     );
 
-  const { title, description, address, creator, imageUrl } = req.body;
-
+  const { title, description, address, creator } = req.body;
   let coordinates;
   try {
     coordinates = await getCoordsForAddress(address);
@@ -45,7 +44,7 @@ export const createPlace: RequestHandler = async (req, res, next) => {
     address,
     coordinates: { lat: coordinates[0], lng: coordinates[1] },
     creator,
-    imageUrl: imageUrl || "image-url",
+    image: req.file?.path,
   });
 
   try {

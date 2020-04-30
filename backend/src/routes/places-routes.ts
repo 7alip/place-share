@@ -20,13 +20,19 @@ import {
   updatePlaceById,
   deletePlaceById,
 } from "../controllers/places";
+import { fileUpload } from "../middlewares/fileUpload-middleware";
 
 const placesRouter = Router();
 
 placesRouter.get("/", getAllPlaces);
 placesRouter.get("/:pid", getPlaceById);
 placesRouter.get("/user/:uid", getPlacesByUserId);
-placesRouter.post("/", checkCreatePlace, createPlace);
+placesRouter.post(
+  "/",
+  fileUpload.single("image"),
+  checkCreatePlace,
+  createPlace
+);
 placesRouter.patch("/:pid", checkUpdatePlace, updatePlaceById);
 placesRouter.delete("/:pid", deletePlaceById);
 

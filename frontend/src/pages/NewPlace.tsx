@@ -1,22 +1,24 @@
 import React, { useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 import Input from "../components/form-elements/Input";
+import Spinner from "../components/ui-elements/Spinner";
 import Button from "../components/form-elements/Button";
+import ErrorModal from "../components/ui-elements/ErrorModal";
 
-import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from "../utils/validator";
-
-import "./PlaceForm.scss";
 import { useForm } from "../hooks/form-hook.js";
 import { useHttpClient } from "../hooks/http-hooks";
 import { AuthContext } from "../context/auth-context";
-import ErrorModal from "../components/ui-elements/ErrorModal";
-import Spinner from "../components/ui-elements/Spinner";
-import { useHistory } from "react-router-dom";
+import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from "../utils/validator";
+
+import "./PlaceForm.scss";
+import ImageUpload from "../components/form-elements/ImageUpload";
 
 const initialInputs = {
   title: { value: "", isValid: false },
   description: { value: "", isValid: false },
   address: { value: "", isValid: false },
+  image: { value: null, isValid: false },
 };
 
 const NewPlace = () => {
@@ -29,17 +31,15 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId,
-        }),
-        { "Content-Type": "application/json" }
-      );
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("image", formState.inputs.image.value);
+      formData.append("creator", auth.userId!);
+      console.log('formData.get("image")', formData.get("image"));
+
+      await sendRequest("http://localhost:5000/api/places", "POST", formData);
       history.push("/");
       // Redirect the user to a different page
     } catch (error) {}
@@ -75,6 +75,12 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Please provide a valid address"
           onInput={formFieldChangeHandler}
+        />
+        <ImageUpload
+          id="image"
+          center
+          onInput={formFieldChangeHandler}
+          errorText="Please provide an image."
         />
         <Button type="submit" disabled={!formState.isValid}>
           Add Place

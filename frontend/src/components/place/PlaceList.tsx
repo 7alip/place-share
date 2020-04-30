@@ -30,7 +30,7 @@ const PlaceList: React.FC<{
           key={place._id}
           _id={place._id}
           address={place.address}
-          imageUrl={place.imageUrl}
+          image={place.image}
           title={place.title}
           description={place.description}
           creator={place.creator}

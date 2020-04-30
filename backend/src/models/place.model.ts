@@ -7,13 +7,13 @@ export interface IPlace extends Document {
   coordinates: { lat: number; lng: number };
   address: string;
   creator: IUser["_id"];
-  imageUrl: string;
+  image: string;
 }
 
 const Place = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  imageUrl: { type: String, required: true },
+  image: { type: String, required: true },
   address: { type: String, required: true },
   coordinates: {
     lat: { type: Number, required: true },
