@@ -25,7 +25,12 @@ export const updatePlaceById: RequestHandler = async (req, res, next) => {
   }
 
   if (!place)
-    next(new HttpError("Could not find a place for the provided id", 404));
+    return next(
+      new HttpError("Could not find a place for the provided id", 404)
+    );
+
+  if (place.creator.toString() !== req.body.userId)
+    return next(new HttpError("You are not allowed to edit this place", 401));
 
   res.status(201).json({ place });
 };
