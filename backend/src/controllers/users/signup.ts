@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
 
 import HttpError from "../../models/http-errors.model";
 import User, { IUser } from "../../models/user.model";
@@ -18,7 +19,7 @@ export const signup: RequestHandler = async (req, res, next) => {
     throw new HttpError("Invalid inputs passed, please check your data", 422);
   }
 
-  const { name, email, password, image }: ISignupUser = req.body;
+  const { name, email, password }: ISignupUser = req.body;
 
   let existingUser;
   try {
@@ -34,11 +35,19 @@ export const signup: RequestHandler = async (req, res, next) => {
       new HttpError("Could not create user, email already exist.", 422)
     );
 
+  let hashedPassword;
+
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    return next(new HttpError("Could not create user, please try again", 500));
+  }
+
   const createdUser: IUser = new User({
     name,
     email,
     image: req.file?.path,
-    password,
+    password: hashedPassword,
     places: [],
   });
 
