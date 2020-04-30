@@ -17,7 +17,7 @@ const getCoordsForAddress: (
     })
     .send();
 
-  return result.body.features[0].center;
+  return result.body.features[0]?.center;
 };
 
 export default getCoordsForAddress;

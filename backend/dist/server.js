@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var body_parser_1 = __importDefault(require("body-parser"));
-var mongoose_1 = __importDefault(require("mongoose"));
 var path_1 = __importDefault(require("path"));
+var express_1 = __importDefault(require("express"));
+var mongoose_1 = __importDefault(require("mongoose"));
+var body_parser_1 = __importDefault(require("body-parser"));
 var cors_middleware_1 = __importDefault(require("./middlewares/cors-middleware"));
 var errorHandler_middleware_1 = __importDefault(require("./middlewares/errorHandler-middleware"));
 var places_routes_1 = __importDefault(require("./routes/places-routes"));

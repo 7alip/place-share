@@ -16,24 +16,30 @@ import MainNavigation from "./components/navigation/MainNavigation";
 import { AuthContext, AuthContextProps } from "./context/auth-context";
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [token, setToken] = useState<string | null>();
   const [userId, setUserId] = useState<string | null>();
 
-  const login = useCallback((uid) => {
-    setIsLoggedIn(true);
+  const login = useCallback((uid, token) => {
+    setToken(token);
     setUserId(uid);
   }, []);
 
   const logout = useCallback(() => {
-    setIsLoggedIn(false);
+    setToken(null);
     setUserId(null);
   }, []);
 
-  const context: AuthContextProps = { isLoggedIn, login, userId, logout };
+  const context: AuthContextProps = {
+    isLoggedIn: !!token,
+    token,
+    login,
+    userId,
+    logout,
+  };
 
   let routes;
 
-  if (isLoggedIn) {
+  if (token) {
     routes = (
       <Switch>
         <Route path="/" exact>
