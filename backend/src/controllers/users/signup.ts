@@ -1,9 +1,10 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import bcrypt from "bcryptjs";
 
-import HttpError from "../../models/http-errors.model";
 import User, { IUser } from "../../models/user.model";
+import HttpError from "../../models/http-errors.model";
 
 interface ISignupUser {
   name: IUser["name"];
@@ -59,5 +60,20 @@ export const signup: RequestHandler = async (req, res, next) => {
     );
   }
 
-  res.status(201).json({ user: createdUser });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser._id, email: createdUser.email },
+      "jwtsecret",
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed, please try again later", 500)
+    );
+  }
+
+  res
+    .status(201)
+    .json({ userId: createdUser._id, email: createdUser.email, token });
 };

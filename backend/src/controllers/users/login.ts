@@ -1,5 +1,6 @@
-import { RequestHandler } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { RequestHandler } from "express";
 
 import HttpError from "../../models/http-errors.model";
 import User, { IUser } from "../../models/user.model";
@@ -43,5 +44,18 @@ export const login: RequestHandler = async (req, res, next) => {
       new HttpError("Invalid credentials, could not log you in.", 401)
     );
 
-  res.json({ message: "Logged in!", user: existingUser });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: existingUser._id, email: existingUser.email },
+      "jwtsecret",
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    return next(
+      new HttpError("Logging in failed, please try again later", 500)
+    );
+  }
+
+  res.json({ userId: existingUser._id, email: existingUser.email, token });
 };
