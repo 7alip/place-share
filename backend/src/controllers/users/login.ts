@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import bcrypt from "bcryptjs";
 
 import HttpError from "../../models/http-errors.model";
 import User, { IUser } from "../../models/user.model";
@@ -20,7 +21,24 @@ export const login: RequestHandler = async (req, res, next) => {
     );
   }
 
-  if (!existingUser || existingUser.password !== password)
+  if (!existingUser)
+    return next(
+      new HttpError("Invalid credentials, could not log you in.", 401)
+    );
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (error) {
+    return next(
+      new HttpError(
+        "Could not log you in, please check your credentials and try again.",
+        500
+      )
+    );
+  }
+
+  if (!isValidPassword)
     return next(
       new HttpError("Invalid credentials, could not log you in.", 401)
     );
