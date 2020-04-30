@@ -32,13 +32,13 @@ const NewPlace = () => {
       await sendRequest(
         "http://localhost:5000/api/places",
         "POST",
-        { "Content-Type": "application/json" },
         JSON.stringify({
           title: formState.inputs.title.value,
           description: formState.inputs.description.value,
           address: formState.inputs.address.value,
           creator: auth.userId,
-        })
+        }),
+        { "Content-Type": "application/json" }
       );
       history.push("/");
       // Redirect the user to a different page

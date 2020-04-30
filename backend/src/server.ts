@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import path from "path";
 
 import corsMiddleware from "./middlewares/cors-middleware";
 import errorHandlerMiddleware from "./middlewares/errorHandler-middleware";
@@ -11,6 +12,10 @@ import notFoundMiddleware from "./middlewares/notFound-middleware";
 const app = express();
 
 app.use(bodyParser.json());
+app.use(
+  "/src/uploads/images",
+  express.static(path.join("src", "uploads", "images"))
+);
 app.use(corsMiddleware);
 
 app.use("/api/user", usersRouter);

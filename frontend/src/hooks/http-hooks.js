@@ -7,7 +7,7 @@ export const useHttpClient = () => {
   const activeHttpRequests = useRef([]);
 
   const sendRequest = useCallback(
-    async (url, method = "GET", headers = {}, body = null) => {
+    async (url, method = "GET", body = null, headers = {}) => {
       setIsLoading(true);
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
@@ -32,8 +32,8 @@ export const useHttpClient = () => {
 
         return responseData;
       } catch (err) {
-        setError(err.message);
         console.log("err", err);
+        setError(err.message);
         throw err;
       } finally {
         setIsLoading(false);

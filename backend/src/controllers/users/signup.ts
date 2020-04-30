@@ -8,15 +8,17 @@ interface ISignupUser {
   name: IUser["name"];
   email: IUser["email"];
   password: IUser["password"];
+  image: IUser["image"];
 }
 
 export const signup: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
 
-  if (!errors.isEmpty())
+  if (!errors.isEmpty()) {
     throw new HttpError("Invalid inputs passed, please check your data", 422);
+  }
 
-  const { name, email, password }: ISignupUser = req.body;
+  const { name, email, password, image }: ISignupUser = req.body;
 
   let existingUser;
   try {
@@ -35,7 +37,7 @@ export const signup: RequestHandler = async (req, res, next) => {
   const createdUser: IUser = new User({
     name,
     email,
-    image: "user-image-url",
+    image: req.file?.path,
     password,
     places: [],
   });

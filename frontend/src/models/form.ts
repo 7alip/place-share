@@ -23,3 +23,14 @@ export interface FormProps {
   onInput: IFormChangeHandler;
   value?: string;
 }
+
+export interface ImageUploadProps {
+  id: string;
+  center: boolean;
+  onInput: (
+    id: string,
+    pickedFile: File | null | undefined,
+    isValid: boolean
+  ) => void;
+  errorText: string;
+}

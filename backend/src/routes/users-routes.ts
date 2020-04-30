@@ -2,6 +2,7 @@ import { Router } from "express";
 import { check } from "express-validator";
 
 import { getUsers, signup, login } from "../controllers/users";
+import { fileUpload } from "../middlewares/fileUpload-middleware";
 
 const checkSignup: any[] = [
   check("name").not().isEmpty(),
@@ -12,7 +13,7 @@ const checkSignup: any[] = [
 const userRouter = Router();
 
 userRouter.get("/", getUsers);
-userRouter.post("/signup", checkSignup, signup);
+userRouter.post("/signup", fileUpload.single("image"), checkSignup, signup);
 userRouter.post("/login", login);
 
 export default userRouter;

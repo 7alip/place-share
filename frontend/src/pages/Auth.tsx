@@ -22,6 +22,7 @@ import ImageUpload from "../components/form-elements/ImageUpload";
 const initialForm = {
   email: { value: "", isValid: false },
   password: { value: "", isValid: false },
+  image: { value: null, isValid: false },
 };
 
 const Auth: React.FC = () => {
@@ -30,48 +31,10 @@ const Auth: React.FC = () => {
   const [isLoginMode, setIsLoginMode] = useState<boolean>(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
-  const [formState, formFieldHandler, setFormData] = useForm(
+  const [formState, formFieldChangeHandler, setFormData] = useForm(
     initialForm,
     false
   );
-
-  const authSubmitHandler: React.FormEventHandler<HTMLFormElement> = async (
-    event
-  ) => {
-    event.preventDefault();
-
-    const loginUrl = "http://localhost:5000/api/user/login";
-    const signupUrl = "http://localhost:5000/api/user/signup";
-
-    const header = {
-      "Content-Type": "application/json",
-    };
-
-    const loginBody = JSON.stringify({
-      email: formState.inputs.email.value,
-      password: formState.inputs.password.value,
-    });
-
-    const signupBody = JSON.stringify({
-      name: formState.inputs.email.value,
-      email: formState.inputs.email.value,
-      password: formState.inputs.password.value,
-    });
-
-    let response;
-    if (isLoginMode) {
-      try {
-        response = await sendRequest(loginUrl, "POST", header, loginBody);
-        console.log("response", response);
-        auth.login(response.user._id);
-      } catch {}
-    } else {
-      try {
-        response = await sendRequest(signupUrl, "POST", header, signupBody);
-        auth.login(response.user._id);
-      } catch (error) {}
-    }
-  };
 
   const switchModeHandler: () => void = () => {
     if (!isLoginMode) {
@@ -93,6 +56,43 @@ const Auth: React.FC = () => {
     setIsLoginMode((prevMode) => !prevMode);
   };
 
+  const authSubmitHandler: React.FormEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
+    event.preventDefault();
+
+    const loginUrl = "http://localhost:5000/api/user/login";
+    const signupUrl = "http://localhost:5000/api/user/signup";
+
+    const header = {
+      "Content-Type": "application/json",
+    };
+
+    const loginBody = JSON.stringify({
+      email: formState.inputs.email.value,
+      password: formState.inputs.password.value,
+    });
+
+    let response;
+    if (isLoginMode) {
+      try {
+        response = await sendRequest(loginUrl, "POST", loginBody, header);
+        auth.login(response.user._id);
+      } catch {}
+    } else {
+      try {
+        const formData = new FormData();
+        formData.append("email", formState.inputs.email.value);
+        formData.append("name", formState.inputs.name.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
+
+        response = await sendRequest(signupUrl, "POST", formData);
+        auth.login(response.user._id);
+      } catch (error) {}
+    }
+  };
+
   return (
     <>
       <ErrorModal show={!!error} error={error!} onClear={clearError} />
@@ -110,13 +110,13 @@ const Auth: React.FC = () => {
                 label="Name"
                 validators={[VALIDATOR_REQUIRE()]}
                 errorText="Please enter a valid name"
-                onInput={formFieldHandler}
+                onInput={formFieldChangeHandler}
               />
               <ImageUpload
+                id="image"
                 errorText={error!}
                 center
-                id="image"
-                onInput={formFieldHandler}
+                onInput={formFieldChangeHandler}
               />
             </>
           )}
@@ -127,7 +127,7 @@ const Auth: React.FC = () => {
             label="Email"
             validators={[VALIDATOR_EMAIL()]}
             errorText="Please enter a valid email address"
-            onInput={formFieldHandler}
+            onInput={formFieldChangeHandler}
           />
           <Input
             id="password"
@@ -136,7 +136,7 @@ const Auth: React.FC = () => {
             label="Password"
             validators={[VALIDATOR_MINLENGTH(6)]}
             errorText="Please enter a valid password (min. 5 characters)"
-            onInput={formFieldHandler}
+            onInput={formFieldChangeHandler}
           />
           <Button disabled={!formState.isValid}>
             {isLoginMode ? "Login" : "Signup"}
