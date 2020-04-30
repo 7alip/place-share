@@ -17,7 +17,7 @@ const CheckAuthMiddleware: RequestHandler = (req, res, next) => {
     req.body.userId = decodedToken.userId;
     next();
   } catch (error) {
-    return next(new HttpError("Authentication failed!", 401));
+    return next(new HttpError("Authentication failed!", 403));
   }
 };
 

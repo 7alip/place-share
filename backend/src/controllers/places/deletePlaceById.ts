@@ -22,6 +22,9 @@ export const deletePlaceById: RequestHandler = async (req, res, next) => {
       new HttpError("Could not find this place for provided id", 404)
     );
 
+  if (place.creator._id.toString() !== req.body.userId)
+    return next(new HttpError("You are not allowed to delete this place", 403));
+
   const imagePath = place.image;
 
   try {

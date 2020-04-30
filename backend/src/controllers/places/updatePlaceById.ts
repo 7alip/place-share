@@ -30,7 +30,7 @@ export const updatePlaceById: RequestHandler = async (req, res, next) => {
     );
 
   if (place.creator.toString() !== req.body.userId)
-    return next(new HttpError("You are not allowed to edit this place", 401));
+    return next(new HttpError("You are not allowed to edit this place", 403));
 
   res.status(201).json({ place });
 };
