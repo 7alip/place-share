@@ -4,14 +4,14 @@ export interface AuthContextProps {
   isLoggedIn: boolean;
   userId?: string | null;
   token?: string | null;
-  login: (uid: string | null, token: string | null) => void;
+  login: (uid: string | null, token: string | null, exp: Date) => void;
   logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
   isLoggedIn: false,
-  token: null,
   userId: null,
+  token: null,
   login: () => {},
   logout: () => {},
 });

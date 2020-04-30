@@ -77,7 +77,7 @@ const Auth: React.FC = () => {
     if (isLoginMode) {
       try {
         response = await sendRequest(loginUrl, "POST", loginBody, header);
-        auth.login(response.userId, response.token);
+        auth.login(response.userId, response.token, response.exp);
       } catch {}
     } else {
       try {
@@ -88,7 +88,7 @@ const Auth: React.FC = () => {
         formData.append("image", formState.inputs.image.value);
 
         response = await sendRequest(signupUrl, "POST", formData);
-        auth.login(response.userId, response.token);
+        auth.login(response.userId, response.token, response.exp);
       } catch (error) {}
     }
   };
