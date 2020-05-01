@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { Suspense } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -6,15 +6,17 @@ import {
   Switch,
 } from "react-router-dom";
 
-import Auth from "./pages/Auth";
-import Users from "./pages/Users";
-import NewPlace from "./pages/NewPlace";
-import UserPlaces from "./pages/UserPlaces";
-import UpdatePlace from "./pages/UpdatePlace";
+import Spinner from "./components/ui-elements/Spinner";
 import MainNavigation from "./components/navigation/MainNavigation";
 
-import { AuthContext, AuthContextProps } from "./context/auth-context";
 import { useAuth } from "./hooks/auth-hook";
+import { AuthContext, AuthContextProps } from "./context/auth-context";
+
+const Auth = React.lazy(() => import("./pages/Auth"));
+const Users = React.lazy(() => import("./pages/Users"));
+const NewPlace = React.lazy(() => import("./pages/NewPlace"));
+const UserPlaces = React.lazy(() => import("./pages/UserPlaces"));
+const UpdatePlace = React.lazy(() => import("./pages/UpdatePlace"));
 
 const App: React.FC = () => {
   const { token, login, logout, userId } = useAuth();
@@ -74,7 +76,17 @@ const App: React.FC = () => {
     <AuthContext.Provider value={context}>
       <Router>
         <MainNavigation />
-        <main>{routes}</main>
+        <main>
+          <Suspense
+            fallback={
+              <div className="center">
+                <Spinner />
+              </div>
+            }
+          >
+            {routes}
+          </Suspense>
+        </main>
       </Router>
     </AuthContext.Provider>
   );
