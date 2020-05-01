@@ -21,7 +21,7 @@ app.use("/api/places", places_routes_1.default);
 app.use(notFound_middleware_1.default);
 app.use(errorHandler_middleware_1.default);
 mongoose_1.default
-    .connect("mongodb+srv://testtest:testtest@cluster0-31adc.mongodb.net/test?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+    .connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0-31adc.mongodb.net/" + process.env.DB_NAME + "?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
     .then(function () {
     app.listen(5000);
 })

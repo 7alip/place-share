@@ -64,7 +64,7 @@ export const signup: RequestHandler = async (req, res, next) => {
   try {
     token = jwt.sign(
       { userId: createdUser._id, email: createdUser.email },
-      "jwtsecret",
+      process.env.JWT_KEY!,
       { expiresIn: "1h" }
     );
   } catch (error) {

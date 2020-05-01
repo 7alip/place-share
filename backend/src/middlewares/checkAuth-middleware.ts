@@ -13,7 +13,9 @@ const CheckAuthMiddleware: RequestHandler = (req, res, next) => {
       throw new Error("Authentication failed!");
     }
 
-    const decodedToken = jwt.verify(token, "jwtsecret") as { userId: string };
+    const decodedToken = jwt.verify(token, process.env.JWT_KEY!) as {
+      userId: string;
+    };
     req.body.userId = decodedToken.userId;
     next();
   } catch (error) {

@@ -26,7 +26,7 @@ app.use(errorHandlerMiddleware);
 
 mongoose
   .connect(
-    "mongodb+srv://testtest:testtest@cluster0-31adc.mongodb.net/test?retryWrites=true&w=majority",
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0-31adc.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
     { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
   )
   .then(() => {

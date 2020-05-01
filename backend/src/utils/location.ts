@@ -1,9 +1,7 @@
 import mapbox from "@mapbox/mapbox-sdk/services/geocoding";
-import { MapiResponse } from "@mapbox/mapbox-sdk/lib/classes/mapi-response";
 
 const geocodingClient = mapbox({
-  accessToken:
-    "pk.eyJ1IjoiN2FsaXAiLCJhIjoiY2s5M2x0cnJwMDI0MDNycWxwZmkwZHNpaSJ9.Pks-bKp8MIQ6m_zq6V0sfw",
+  accessToken: process.env.MAPBOX_TOKEN!,
 });
 
 const getCoordsForAddress: (
