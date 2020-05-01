@@ -61,8 +61,8 @@ const Auth: React.FC = () => {
   ) => {
     event.preventDefault();
 
-    const loginUrl = "http://localhost:5000/api/user/login";
-    const signupUrl = "http://localhost:5000/api/user/signup";
+    const loginUrl = `${process.env.REACT_APP_API_URL}/user/login`;
+    const signupUrl = `${process.env.REACT_APP_API_URL}/user/signup`;
 
     const header = {
       "Content-Type": "application/json",

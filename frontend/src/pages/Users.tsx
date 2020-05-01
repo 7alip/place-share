@@ -13,8 +13,14 @@ const Users: React.FC = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      console.log(
+        "process.env.REACT_APP_API_URL",
+        process.env.REACT_APP_API_URL
+      );
       try {
-        const { users } = await sendRequest("http://localhost:5000/api/user");
+        const { users } = await sendRequest(
+          `${process.env.REACT_APP_API_URL}/user`
+        );
 
         setUsers(users);
       } catch (error) {}

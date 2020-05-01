@@ -39,7 +39,7 @@ const PlaceItem: React.FC<PlaceProps> = (props) => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${props._id}`,
+        `${process.env.REACT_APP_API_URL}/places/${props._id}`,
         "DELETE",
         null,
         {
@@ -92,7 +92,7 @@ const PlaceItem: React.FC<PlaceProps> = (props) => {
           {isLoading && <Spinner asOverlay />}
           <div className="place-item__image">
             <img
-              src={`http://localhost:5000/${props.image}`}
+              src={`${process.env.REACT_APP_ASSETS_URL}/${props.image}`}
               alt={props.title}
             />
           </div>

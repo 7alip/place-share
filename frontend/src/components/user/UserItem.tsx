@@ -16,7 +16,10 @@ const UserItem: React.FC<{ user: UserProps }> = (props) => {
       <Card>
         <Link to={`/${_id}/places`}>
           <div className="user-item__image">
-            <Avatar image={`http://localhost:5000/${image}`} alt={name} />
+            <Avatar
+              image={`${process.env.REACT_APP_ASSETS_URL}/${image}`}
+              alt={name}
+            />
           </div>
           <div className="user-item__info">
             <h2>{name}</h2>
